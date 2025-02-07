@@ -14,10 +14,24 @@ type CategoryController struct {
 // Create a new category
 func (c *CategoryController) Create() {
 	var category models.Category
-	json.Unmarshal(c.Ctx.Input.RequestBody, &category)
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &category)
+	if err != nil {
+		c.Data["json"] = map[string]string{"error": "Invalid request data"}
+		c.ServeJSON()
+		return
+	}
 
 	o := orm.NewOrm()
-	_, err := o.Insert(&category)
+
+	// Check if a category with the same title already exists
+	exists := o.QueryTable("category").Filter("Title", category.Title).Exist()
+	if exists {
+		c.Data["json"] = map[string]string{"error": "Category already exists"}
+		c.ServeJSON()
+		return
+	}
+
+	_, err = o.Insert(&category)
 	if err != nil {
 		c.Data["json"] = map[string]string{"error": "Failed to create category", "details": err.Error()}
 	} else {
