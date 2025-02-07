@@ -19,7 +19,7 @@ func (c *CategoryController) Create() {
 	o := orm.NewOrm()
 	_, err := o.Insert(&category)
 	if err != nil {
-		c.Data["json"] = map[string]string{"error": "Failed to create category"}
+		c.Data["json"] = map[string]string{"error": "Failed to create category", "details": err.Error()}
 	} else {
 		c.Data["json"] = category
 	}
