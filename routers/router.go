@@ -14,4 +14,9 @@ func init() {
 
 	// category
 	beego.Router("/create_category/", &controllers.CategoryController{}, "post:Create")
+
+	// task
+	beego.Router("/tasks/", &controllers.TaskController{}, "get:GetAll")
+	beego.Router("/create_task/", &controllers.TaskController{}, "post:Create")
+	beego.Router("/tasks/:id", &controllers.TaskController{}, "get:Get;put:Update;delete:Delete")
 }

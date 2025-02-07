@@ -11,7 +11,6 @@ type CategoryController struct {
 	web.Controller
 }
 
-// Create a new category
 func (c *CategoryController) Create() {
 	var category models.Category
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &category)
