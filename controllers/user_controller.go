@@ -35,3 +35,26 @@ func (c *UserController) Register() {
 	}
 	c.ServeJSON()
 }
+
+func (c *UserController) Login() {
+	var input models.User
+	json.Unmarshal(c.Ctx.Input.RequestBody, &input)
+
+	o := orm.NewOrm()
+	user := models.User{Email: input.Email}
+
+	err := o.Read(&user, "Email")
+	if err != nil {
+		c.Data["json"] = map[string]string{"error": "Invalid credentials"}
+		c.ServeJSON()
+		return
+	}
+
+	// Check password
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
+		c.Data["json"] = map[string]string{"error": "Invalid credentials"}
+	} else {
+		c.Data["json"] = map[string]string{"message": "Login successful"}
+	}
+	c.ServeJSON()
+}
